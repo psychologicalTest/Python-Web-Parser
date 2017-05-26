@@ -28,7 +28,7 @@ while page > 0:
 	requestURL= 'http://astro.click108.com.tw/unit001/index.php?type=love&page=1'
 	soup = brewSoup(requestURL)
 	#result = soup.findAll("table",{"background","http://yimgs.click108.com.tw/astro2/psychologicTests/images/table02_bg1.gif"})
-	table = soup.findAll('td', attrs={'background':'http://yimgs.click108.com.tw/astro2/psychologicTests/images/table01_bg.gif'})
+	table = soup.findAll('td', attrs={'class':'txt06'})
 	for i in table :
 		print(i) 
      
