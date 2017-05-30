@@ -24,11 +24,16 @@ while page > 0:
 	soup = brewSoup(requestURL)
 	table = soup.findAll('td', attrs={'class':'txt06'})
 	for articleURL in table :
-		#print(articleURL.a['href']) 
-		print('======================================')
-
 		soup = brewSoup(articleURL.a['href'])
 		table = soup.findAll('span', attrs={'class':'title03'})
 		print('======================================')
 		for j in table[1:] :
 			print(j.text)
+		print('--------------------------------------')
+		options = soup.findAll('span', attrs={'class':'txt01'})
+		for j in options :
+			print(j.text)
+		print('======================================')
+		#requestURL= str(articleURL.a['href'])
+		#soup = brewSoup(requestURL)
+		#table = soup.findAll('td', attrs={'class':'txt06'})
