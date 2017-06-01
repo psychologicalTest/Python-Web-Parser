@@ -8,6 +8,7 @@
 from bs4 import BeautifulSoup #@note-(install via pip3)
 import json
 from selenium import webdriver #@note-parse ajax call back from website(install via pip3)
+import urllib.parse
 
 driver = webdriver.PhantomJS(executable_path=r'/Users/zhonghaoli/Downloads/phantomjs-2.1.1-macosx/bin/phantomjs') # PhantomJS
 
@@ -26,6 +27,11 @@ while page > 0:
 	for articleURL in table :
 
 		soup = brewSoup(articleURL.a['href'])
+		url = articleURL.a['href']
+		parsed = urllib.parse.urlparse(url)
+		qID = urllib.parse.parse_qs(parsed.query)['qID'][0]
+
+
 		table = soup.findAll('span', attrs={'class':'title03'})
 		print('======================================')
 		for j in table[1:] :
@@ -52,6 +58,15 @@ while page > 0:
 			soup = brewSoup(requestURL)
 			table = soup.findAll('span', attrs={'class':'title03'})
 
+		print('++++++++++++++++++++++++++++++++++++++')
+		requestURL= 'http://astro.click108.com.tw/unit001/testResult.php?qID='+str(qID)
+		print(requestURL)
+		soup = brewSoup(requestURL)
+		table = soup.findAll('span', attrs={'class':'txt01'})
+		for k in table :
+			print(k.text)
+			print('***********************************')
+		print('++++++++++++++++++++++++++++++++++++++')
 
 		print('end')
 		print('======================================')
