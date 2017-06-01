@@ -24,6 +24,7 @@ while page > 0:
 	soup = brewSoup(requestURL)
 	table = soup.findAll('td', attrs={'class':'txt06'})
 	for articleURL in table :
+
 		soup = brewSoup(articleURL.a['href'])
 		table = soup.findAll('span', attrs={'class':'title03'})
 		print('======================================')
@@ -33,7 +34,24 @@ while page > 0:
 		options = soup.findAll('span', attrs={'class':'txt01'})
 		for j in options :
 			print(j.text)
+		print('--------------------------------------')
+		
+
+		page = 1
+		requestURL= articleURL.a['href']+'&sID='+str(page)
+		soup = brewSoup(requestURL)
+		table = soup.findAll('span', attrs={'class':'title03'})
+		while table[2].text  :
+			page += 1
+			print(table[2].text)
+			options = soup.findAll('span', attrs={'class':'txt01'})
+			for j in options :
+				print(j.text)
+			print('--------------------------------------')
+			requestURL= articleURL.a['href']+'&sID='+str(page)
+			soup = brewSoup(requestURL)
+			table = soup.findAll('span', attrs={'class':'title03'})
+
+
+		print('end')
 		print('======================================')
-		#requestURL= str(articleURL.a['href'])
-		#soup = brewSoup(requestURL)
-		#table = soup.findAll('td', attrs={'class':'txt06'})
