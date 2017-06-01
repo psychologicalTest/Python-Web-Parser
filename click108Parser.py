@@ -9,8 +9,11 @@ from bs4 import BeautifulSoup #@note-(install via pip3)
 import json
 from selenium import webdriver #@note-parse ajax call back from website(install via pip3)
 import urllib.parse
+import json
 
 driver = webdriver.PhantomJS(executable_path=r'/Users/zhonghaoli/Downloads/phantomjs-2.1.1-macosx/bin/phantomjs') # PhantomJS
+psychologicalTestArray=[]
+psychologicalTestArray.clear()
 
 def brewSoup(requestURL):
 	driver.get(requestURL)
@@ -24,7 +27,9 @@ while page > 0:
 	requestURL= 'http://astro.click108.com.tw/unit001/index.php?type='+str(catagory)+'&page='+str(page)
 	soup = brewSoup(requestURL)
 	table = soup.findAll('td', attrs={'class':'txt06'})
-	for articleURL in table :
+	for articleURL in table : #question loop
+		articleContent = {}
+		articleContent.clear()
 
 		soup = brewSoup(articleURL.a['href'])
 		url = articleURL.a['href']
@@ -34,39 +39,125 @@ while page > 0:
 
 		table = soup.findAll('span', attrs={'class':'title03'})
 		print('======================================')
-		for j in table[1:] :
-			print(j.text)
+		articleContent['type'] = 'love'
+		print('題目：'+table[1].text)
+		articleContent['title'] = table[1].text
+		articleContent['questions'] = []
 		print('--------------------------------------')
-		options = soup.findAll('span', attrs={'class':'txt01'})
-		for j in options :
-			print(j.text)
-		print('--------------------------------------')
-		
+		questions = []
+		questions.clear()
+		questionsContent = {}
+		questionsContent.clear()
+		print(table[2].text)
+		questionsContent['Qtitle'] = table[2].text
+		options = soup.findAll('span', attrs={'class':'txt01'}) ##options
+		Qoptions = []
+		Qoptions.clear()
+		optionCount = 0
+		for j in options : #qoption loop
 
-		page = 1
-		requestURL= articleURL.a['href']+'&sID='+str(page)
+			option = {}
+			option.clear()
+
+
+			if optionCount == 0:
+				option['option'] = 'A'
+			 
+			elif optionCount == 1:
+				option['option'] = 'B'
+			 
+			elif optionCount == 2:
+				option['option'] = 'C'
+			 
+			else:
+				option['option'] = 'D'
+			 
+
+			option['context'] = j.text
+			print(j.text)
+			optionCount += 1
+			Qoptions.append(option)
+		questionsContent['Qoptions'] = Qoptions
+		articleContent['questions'].append(questionsContent)
+
+		print (json.dumps(articleContent,sort_keys=True, indent=4, ensure_ascii=False))
+
+		print('--------------------------------------')
+
+
+		optionPage = 1
+		requestURL= articleURL.a['href']+'&sID='+str(optionPage)
 		soup = brewSoup(requestURL)
 		table = soup.findAll('span', attrs={'class':'title03'})
+
+
+
 		while table[2].text  :
-			page += 1
+
+			
+			questionsContent.clear()
+			optionPage += 1
 			print(table[2].text)
-			options = soup.findAll('span', attrs={'class':'txt01'})
+			questionsContent['Qtitle'] = table[2].text
+			options = soup.findAll('span', attrs={'class':'txt01'}) ##options
+			Qoptions = []
+			Qoptions.clear()
+
+			optionCount = 0
 			for j in options :
+
+				option = {}
+				option.clear()
+
+
+				if optionCount == 0:
+					option['option'] = 'A'
+				 
+				elif optionCount == 1:
+					option['option'] = 'B'
+				 
+				elif optionCount == 2:
+					option['option'] = 'C'
+				 
+				else:
+					option['option'] = 'D'
+				 
+
+				option['context'] = j.text
 				print(j.text)
+				optionCount += 1
+				Qoptions.append(option)
+			questionsContent['Qoptions'] = Qoptions
+
+
 			print('--------------------------------------')
-			requestURL= articleURL.a['href']+'&sID='+str(page)
+			requestURL= articleURL.a['href']+'&sID='+str(optionPage)
 			soup = brewSoup(requestURL)
 			table = soup.findAll('span', attrs={'class':'title03'})
+			articleContent['questions'].append(questionsContent)
+			print (json.dumps(articleContent,sort_keys=True, indent=4, ensure_ascii=False))
+			break
+		
+		
 
-		print('++++++++++++++++++++++++++++++++++++++')
-		requestURL= 'http://astro.click108.com.tw/unit001/testResult.php?qID='+str(qID)
-		print(requestURL)
-		soup = brewSoup(requestURL)
-		table = soup.findAll('span', attrs={'class':'txt01'})
-		for k in table :
-			print(k.text)
-			print('***********************************')
-		print('++++++++++++++++++++++++++++++++++++++')
+		
+		
+		psychologicalTestArray.append(articleContent)
+		with open("fk.json", 'a') as out:
+			out.write(json.dumps(psychologicalTestArray, ensure_ascii=False, indent=4))
 
-		print('end')
-		print('======================================')
+		print('==terminated==')
+		break
+
+		#print('++++++++++++++++++++++++++++++++++++++')
+		#requestURL= 'http://astro.click108.com.tw/unit001/testResult.php?qID='+str(qID)
+		#print(requestURL)
+		#soup = brewSoup(requestURL)
+		#table = soup.findAll('span', attrs={'class':'txt01'})
+		#for k in table :
+		#	print(k.text)
+		#	print('***********************************')
+		#print('++++++++++++++++++++++++++++++++++++++')
+
+		#print('end')
+		#print('======================================')
