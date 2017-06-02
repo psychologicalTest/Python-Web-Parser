@@ -54,11 +54,11 @@ while page > 0:
 		Qoptions = []
 		Qoptions.clear()
 		optionCount = 0
+
 		for j in options : #qoption loop
 
 			option = {}
 			option.clear()
-
 
 			if optionCount == 0:
 				option['option'] = 'A'
@@ -79,22 +79,17 @@ while page > 0:
 			Qoptions.append(option)
 		questionsContent['Qoptions'] = Qoptions
 		articleContent['questions'].append(questionsContent)
-
 		print (json.dumps(articleContent,sort_keys=True, indent=4, ensure_ascii=False))
-
 		print('--------------------------------------')
-
 
 		optionPage = 1
 		requestURL= articleURL.a['href']+'&sID='+str(optionPage)
 		soup = brewSoup(requestURL)
 		table = soup.findAll('span', attrs={'class':'title03'})
 
-
-
 		while table[2].text  :
 
-			
+			questionsContent = {}
 			questionsContent.clear()
 			optionPage += 1
 			print(table[2].text)
@@ -102,33 +97,30 @@ while page > 0:
 			options = soup.findAll('span', attrs={'class':'txt01'}) ##options
 			Qoptions = []
 			Qoptions.clear()
-
 			optionCount = 0
+
 			for j in options :
 
 				option = {}
 				option.clear()
 
-
 				if optionCount == 0:
 					option['option'] = 'A'
-				 
+			 
 				elif optionCount == 1:
 					option['option'] = 'B'
-				 
+			 
 				elif optionCount == 2:
 					option['option'] = 'C'
-				 
+			 
 				else:
 					option['option'] = 'D'
-				 
-
+			 
 				option['context'] = j.text
 				print(j.text)
 				optionCount += 1
 				Qoptions.append(option)
 			questionsContent['Qoptions'] = Qoptions
-
 
 			print('--------------------------------------')
 			requestURL= articleURL.a['href']+'&sID='+str(optionPage)
@@ -137,11 +129,7 @@ while page > 0:
 			articleContent['questions'].append(questionsContent)
 			print (json.dumps(articleContent,sort_keys=True, indent=4, ensure_ascii=False))
 			break
-		
-		
-
-		
-		
+			
 		psychologicalTestArray.append(articleContent)
 		with open("fk.json", 'a') as out:
 			out.write(json.dumps(psychologicalTestArray, ensure_ascii=False, indent=4))
