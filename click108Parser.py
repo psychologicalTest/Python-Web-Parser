@@ -20,8 +20,8 @@ def brewSoup(requestURL):
 	pageSource = driver.page_source 
 	return BeautifulSoup(pageSource, 'html.parser')
 
-catagory = 'love'
-page = 1 ;
+catagory = 'future'
+page = 5 ;
 while page > 0:
 	page -= 1
 	requestURL= 'http://astro.click108.com.tw/unit001/index.php?type='+str(catagory)+'&page='+str(page)
@@ -35,63 +35,19 @@ while page > 0:
 		url = articleURL.a['href']
 		parsed = urllib.parse.urlparse(url)
 		qID = urllib.parse.parse_qs(parsed.query)['qID'][0]
-
-
-		table = soup.findAll('span', attrs={'class':'title03'})
-		print('======================================')
-		articleContent['type'] = 'love'
-		print('題目：'+table[1].text)
-		articleContent['title'] = table[1].text
-		articleContent['questions'] = []
-		print('--------------------------------------')
-		questions = []
-		questions.clear()
-		questionsContent = {}
-		questionsContent.clear()
-		print(table[2].text)
-		questionsContent['Qtitle'] = table[2].text
-		options = soup.findAll('span', attrs={'class':'txt01'}) ##options
-		Qoptions = []
-		Qoptions.clear()
-		optionCount = 0
-
-		for j in options : #qoption loop
-
-			option = {}
-			option.clear()
-
-			if optionCount == 0:
-				option['option'] = 'A'
-			 
-			elif optionCount == 1:
-				option['option'] = 'B'
-			 
-			elif optionCount == 2:
-				option['option'] = 'C'
-			 
-			else:
-				option['option'] = 'D'
-			 
-
-			option['context'] = j.text
-			print(j.text)
-			optionCount += 1
-			Qoptions.append(option)
-		questionsContent['Qoptions'] = Qoptions
-		articleContent['questions'].append(questionsContent)
-		print (json.dumps(articleContent,sort_keys=True, indent=4, ensure_ascii=False))
-		print('--------------------------------------')
-
-		optionPage = 1
-		requestURL= articleURL.a['href']+'&sID='+str(optionPage)
-		soup = brewSoup(requestURL)
 		table = soup.findAll('span', attrs={'class':'title03'})
 
-		while table[2].text  :
+		try:
 
+			articleContent['type'] = 'future'
+			print('題目：'+table[1].text)
+			articleContent['title'] = table[1].text
+			articleContent['questions'] = []
+			questions = []
+			questions.clear()
 			questionsContent = {}
 			questionsContent.clear()
-			optionPage += 1
+
 			print(table[2].text)
 			questionsContent['Qtitle'] = table[2].text
 			options = soup.findAll('span', attrs={'class':'txt01'}) ##options
@@ -99,53 +55,89 @@ while page > 0:
 			Qoptions.clear()
 			optionCount = 0
 
-			for j in options :
+			for j in options : #qoption loop
 
 				option = {}
 				option.clear()
 
 				if optionCount == 0:
 					option['option'] = 'A'
-			 
+				 
 				elif optionCount == 1:
 					option['option'] = 'B'
-			 
+				 
 				elif optionCount == 2:
 					option['option'] = 'C'
-			 
+				 
 				else:
 					option['option'] = 'D'
-			 
+				 
 				option['context'] = j.text
 				print(j.text)
 				optionCount += 1
 				Qoptions.append(option)
 			questionsContent['Qoptions'] = Qoptions
+			articleContent['questions'].append(questionsContent)
+			print (json.dumps(articleContent,sort_keys=True, indent=4, ensure_ascii=False))
 
-			print('--------------------------------------')
+			optionPage = 1
 			requestURL= articleURL.a['href']+'&sID='+str(optionPage)
 			soup = brewSoup(requestURL)
 			table = soup.findAll('span', attrs={'class':'title03'})
-			articleContent['questions'].append(questionsContent)
-			print (json.dumps(articleContent,sort_keys=True, indent=4, ensure_ascii=False))
-			break
-			
-		psychologicalTestArray.append(articleContent)
-		with open("fk.json", 'a') as out:
-			out.write(json.dumps(psychologicalTestArray, ensure_ascii=False, indent=4))
 
-		print('==terminated==')
-		break
+			while table[2].text  :
 
-		#print('++++++++++++++++++++++++++++++++++++++')
-		#requestURL= 'http://astro.click108.com.tw/unit001/testResult.php?qID='+str(qID)
-		#print(requestURL)
-		#soup = brewSoup(requestURL)
-		#table = soup.findAll('span', attrs={'class':'txt01'})
-		#for k in table :
-		#	print(k.text)
-		#	print('***********************************')
-		#print('++++++++++++++++++++++++++++++++++++++')
+				questionsContent = {}
+				questionsContent.clear()
+				optionPage += 1
+				print(table[2].text)
+				questionsContent['Qtitle'] = table[2].text
+				options = soup.findAll('span', attrs={'class':'txt01'}) ##options
+				Qoptions = []
+				Qoptions.clear()
+				optionCount = 0
 
-		#print('end')
-		#print('======================================')
+				for j in options :
+
+					option = {}
+					option.clear()
+
+					if optionCount == 0:
+						option['option'] = 'A'
+				 
+					elif optionCount == 1:
+						option['option'] = 'B'
+				 
+					elif optionCount == 2:
+						option['option'] = 'C'
+				 
+					else:
+						option['option'] = 'D'
+				 
+					option['context'] = j.text
+					print(j.text)
+					optionCount += 1
+					Qoptions.append(option)
+				questionsContent['Qoptions'] = Qoptions
+				requestURL= articleURL.a['href']+'&sID='+str(optionPage)
+				soup = brewSoup(requestURL)
+				table = soup.findAll('span', attrs={'class':'title03'})
+				articleContent['questions'].append(questionsContent)
+				print (json.dumps(articleContent,sort_keys=True, indent=4, ensure_ascii=False))
+
+			articleContent['answers'] = []
+			requestURL= 'http://astro.click108.com.tw/unit001/testResult.php?qID='+str(qID)
+			print(requestURL)
+			soup = brewSoup(requestURL)
+			table = soup.findAll('span', attrs={'class':'txt01'})
+			for k in table :
+				print(k.text)
+				articleContent['answers'].append({'context' : k.text})
+			psychologicalTestArray.append(articleContent)
+
+		except IndexError:
+			continue
+
+
+with open("fk.json", 'a') as out:
+	out.write(json.dumps(psychologicalTestArray, ensure_ascii=False, indent=4))
